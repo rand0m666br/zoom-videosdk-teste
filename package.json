@@ -1,0 +1,17 @@
+{
+  "name": "zoom-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "@zoom/videosdk": "^2.2.0"
+  }
+}

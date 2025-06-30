@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite App</title>
+  <style>
+    /* adjust the CSS to your liking */
+    video-player-container {
+      width: 100%;
+      /* height: 1000px; */
+      height: 700px;
+      background-color: red;
+      display: inline-block;
+    }
+
+    video-player {
+      width: 25%;
+      height: auto;
+      aspect-ratio: 16/9;
+      display: inline-block;
+      background-color: black;
+    }
+
+    button {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <video-player-container></video-player-container>
+
+  <script type="module" src="/src/main.js"></script>
+
+  <button id="stopVideo">Stop video</button>
+  <button id="startVideo">Start video</button>
+</body>
+
+</html>
