@@ -30,7 +30,6 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
     if (payload.action === 'Start') {
       console.log('user ' + payload.userId + ' ' + payload.action + ' their video');
       // a user turned on their video, render it
-      // if (usrId != null && usrId == payload.userId && joined == true) {
       stream.attachVideo(payload.userId, 3).then((userVideo) => {
         //document.querySelector('video-player-container').removeChild(document.getElementById(client.getCurrentUserInfo().userId));
         document.querySelector('video-player-container').appendChild(userVideo)
@@ -54,89 +53,60 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
       return stream.startVideo().then(() => {
         return stream.attachVideo(client.getCurrentUserInfo().userId);
       }).then((userVideo) => {
-        // document.querySelector('video-player-container').appendChild(userVideo).id = client.getCurrentUserInfo().userId;
-        document.querySelector('video-player-container').appendChild(userVideo);
-        // document.querySelector('video-player-container').replaceChild(userVideo, document.getElementById("video1")).id = "video1";
-        // myId = document.querySelector('video-player');
+        // document.querySelector('video-player-container').appendChild(userVideo);
+        document.querySelector('video-player-container').replaceChild(userVideo, document.getElementById("myVideo")).id = "video1";
       });
     })
     .catch((error) => {
       console.error('Erro ao iniciar vídeo:', error);
     })
 
-
-  // document.getElementById("stopVideo").onclick = function () {
-  // console.log('ok');
-
-  // client.on("video-capturing-change", async (payload) => {
-  client.on("user-video-status-changed", async (payload) => {
-    console.log(payload.userId);
-    // if (payload.state === "Started") {
-    //   const stream = client.getMediaStream();
-    //   stream.attachVideo(payload.userId, 3).then((userVideo) => {
-    //     document.querySelector('video-player-container').appendChild(userVideo)
-    //   })
-    // } else {
-    //   stream.detachVideo(payload.userId)
-    // }
-  });
-
   client.on("user-update", async (payload) => {
     console.log('user-update');
-    // if (payload.state === "Started") {
-    // const stream = client.getMediaStream();
-    // stream.attachVideo(payload.userId, 3).then((userVideo) => {
-    // document.querySelector('video-player-container').appendChild(userVideo)
-    // })
-    // }
-    //  else {
-    //   stream.detachVideo(payload.userId)
-    // }
   });
-  // }
 
 
-  // let videoOn = true;
+  let videoOn = true;
 
-  // document.getElementById('toggleVideo').addEventListener('click', () => {
-  //   const mediaStream = client.getMediaStream();
+  document.getElementById('toggleVideo').addEventListener('click', () => {
+    const mediaStream = client.getMediaStream();
 
-  //   if (!videoOn) {
-  //     mediaStream.startVideo()
-  //       .then(() => {
-  //         videoOn = true;
-  //         console.log("Video started");
-  //       })
-  //       .catch(err => console.error("Start video failed", err));
-  //   } else {
-  //     mediaStream.stopVideo()
-  //       .then(() => {
-  //         videoOn = false;
-  //         console.log("Video stopped");
-  //       })
-  //       .catch(err => console.error("Stop video failed", err));
-  //   }
-  // });
+    if (!videoOn) {
+      mediaStream.startVideo()
+        .then(() => {
+          videoOn = true;
+          console.log("Video started");
+        })
+        .catch(err => console.error("Start video failed", err));
+    } else {
+      mediaStream.stopVideo()
+        .then(() => {
+          videoOn = false;
+          console.log("Video stopped");
+        })
+        .catch(err => console.error("Stop video failed", err));
+    }
+  });
 
 
 
 
   // Parar o vídeo (botão Stop Video)
-  document.getElementById("stopVideo").onclick = function () {
-    const stream = client.getMediaStream();
-    stream.stopVideo();
-    // stream.stopVideo().then(() => {
-    // stream.detachVideo(client.getCurrentUserInfo().userId);
+//   document.getElementById("stopVideo").onclick = function () {
+//     const stream = client.getMediaStream();
+//     stream.stopVideo();
+//     // stream.stopVideo().then(() => {
+//     // stream.detachVideo(client.getCurrentUserInfo().userId);
 
-    // document.querySelector('video-player-container').removeChild(document.getElementById(client.getCurrentUserInfo().userId));
-    // })
-  }
+//     // document.querySelector('video-player-container').removeChild(document.getElementById(client.getCurrentUserInfo().userId));
+//     // })
+//   }
 
-  // Iniciar o vídeo (botão Start Video)
-  document.getElementById("startVideo").onclick = function () {
-    const stream = client.getMediaStream();
-    stream.startVideo();
-  }
+//   // Iniciar o vídeo (botão Start Video)
+//   document.getElementById("startVideo").onclick = function () {
+//     const stream = client.getMediaStream();
+//     stream.startVideo();
+//   }
 })
 
 
