@@ -53,7 +53,8 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
     .join(sessionName, jwtToken, userName)
     .then(() => {
       const stream = client.getMediaStream();
-      return stream.startVideo().then(() => {
+      return stream.startVideo().then(() => { // Usar isso aqui caso for usar sem background
+        // return stream.startVideo({ virtualBackground: { imageUrl: '../public/background_hnsggg.png' } }).then(() => {
         return stream.attachVideo(client.getCurrentUserInfo().userId);
       }).then((userVideo) => {
         // document.querySelector('video-player-container').appendChild(userVideo);
@@ -126,6 +127,11 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
     }
   });
   // --------------------------------------------------
+
+  document.getElementById('startAudio').addEventListener('click', () => {
+    const stream = client.getMediaStream();
+    stream.startAudio();
+  });
 
   // Sair da reunião
   document.getElementById('leave').addEventListener('click', () => {
