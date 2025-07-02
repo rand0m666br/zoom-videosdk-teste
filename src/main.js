@@ -3,9 +3,8 @@ import ZoomVideo from '@zoom/videosdk'
 const client = ZoomVideo.createClient()
 
 var sessionName = 'testeum';
-var jwtToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBfa2V5IjoiTGduOU04QVFPeXQyZUowc2RVT3FvOG4ybW10OW02TTBaNHJZIiwicm9sZV90eXBlIjowLCJ0cGMiOiJ0ZXN0ZXVtIiwidmVyc2lvbiI6MSwiaWF0IjoxNzUxMzk0NDM3LCJleHAiOjE3NTE0MDE2Mzd9.lasyuedu3dkIRYpkrCzV8YkNRtBaTQUNpv1THmArPhY'; // precisa ser o token jwt de vídeo
+var jwtToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBfa2V5IjoiTGduOU04QVFPeXQyZUowc2RVT3FvOG4ybW10OW02TTBaNHJZIiwicm9sZV90eXBlIjowLCJ0cGMiOiJ0ZXN0ZXVtIiwidmVyc2lvbiI6MSwiaWF0IjoxNzUxNDc0NTc4LCJleHAiOjE3NTE0ODE3Nzh9.10vs-cl83WMatyiyTN70YmDYm_k6Z6m12ykA6cIe99Q'; // precisa ser o token jwt de vídeo
 var userName = 'Teste';
-var caralho = 0;
 
 client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
   // Se usuário entra
@@ -16,11 +15,14 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
   });
 
   // Se usuário é removido
+  // Funciona caso o usuário clique no botão pra sair
+  // TODO: detectar se o usuário saiu fechando a aba (no momento não detecta)
   client.on('user-removed', (payload) => {
     payload.forEach((item) => {
       console.log(`${item.userId} left the session.`);
-
-      stream.detachVideo(item.userId); // N tá funcionando
+      document.querySelector('video-player-container').removeChild(document.querySelector(`[node-id="${item.userId}"]`));
+      document.querySelector('video-player-container').removeChild(document.querySelector('[node-id="0"]'));
+      // stream.detachVideo(item.userId);
     });
   });
 
@@ -45,7 +47,8 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
     }
   })
 
-
+  // Entrar na sessão
+  // --------------------------------------------------
   client
     .join(sessionName, jwtToken, userName)
     .then(() => {
@@ -54,23 +57,58 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
         return stream.attachVideo(client.getCurrentUserInfo().userId);
       }).then((userVideo) => {
         // document.querySelector('video-player-container').appendChild(userVideo);
-        document.querySelector('video-player-container').replaceChild(userVideo, document.getElementById("myVideo")).id = "video1";
+        document.querySelector('video-player-container').replaceChild(userVideo, document.getElementById("myVideo"));
       });
     })
     .catch((error) => {
       console.error('Erro ao iniciar vídeo:', error);
     })
+  // --------------------------------------------------
 
-  client.on("user-update", async (payload) => {
-    console.log('user-update');
+  // Inútil por enquanto
+  // --------------------------------------------------
+  // client.on("user-update", async (payload) => {
+  //   console.log('user-update');
+  // });
+
+  // client.on('connection-change', (payload) => {
+  //   console.log(payload);
+  // });
+  // --------------------------------------------------
+
+  // Chat
+  // --------------------------------------------------
+  // Enviar mensagem ao clicar no botão
+  var btnEnviar = document.getElementById("btnEnviar");
+  btnEnviar.addEventListener('click', () => {
+    const chat = client.getChatClient();
+    const msg = document.getElementById("chatInput").value;
+    chat.sendToAll(msg);
   });
 
+  // Enviar mensagem ao apertar Enter
+  document.addEventListener('keydown', (event) => {
+    if (event.key == 'Enter') {
+      const chat = client.getChatClient();
+      const msg = document.getElementById("chatInput").value;
+      chat.sendToAll(msg);
+    }
+  });
 
+  client.on('chat-on-message', (payload) => {
+    console.log(payload)
+    console.log(`Message: ${payload.message}, from ${payload.sender.name} to ${payload.receiver.name}`)
+    // document.querySelector('.messages').appendChild(`<span>${payload.message}</span>`)
+    document.querySelector('.messages').innerHTML += `<span class="senderName">${payload.sender.name}:</span><span class="sentMessage">${payload.message}</span>`;
+    document.getElementById("chatInput").value = "";
+  })
+  // --------------------------------------------------
+
+  // Ligar ou desligar a câmera
+  // --------------------------------------------------
   let videoOn = true;
-
   document.getElementById('toggleVideo').addEventListener('click', () => {
     const mediaStream = client.getMediaStream();
-
     if (!videoOn) {
       mediaStream.startVideo()
         .then(() => {
@@ -87,26 +125,33 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
         .catch(err => console.error("Stop video failed", err));
     }
   });
+  // --------------------------------------------------
+
+  // Sair da reunião
+  document.getElementById('leave').addEventListener('click', () => {
+    client.leave();
+    window.location.replace("success.html");
+  });
 
 
 
 
   // Parar o vídeo (botão Stop Video)
-//   document.getElementById("stopVideo").onclick = function () {
-//     const stream = client.getMediaStream();
-//     stream.stopVideo();
-//     // stream.stopVideo().then(() => {
-//     // stream.detachVideo(client.getCurrentUserInfo().userId);
+  //   document.getElementById("stopVideo").onclick = function () {
+  //     const stream = client.getMediaStream();
+  //     stream.stopVideo();
+  //     // stream.stopVideo().then(() => {
+  //     // stream.detachVideo(client.getCurrentUserInfo().userId);
 
-//     // document.querySelector('video-player-container').removeChild(document.getElementById(client.getCurrentUserInfo().userId));
-//     // })
-//   }
+  //     // document.querySelector('video-player-container').removeChild(document.getElementById(client.getCurrentUserInfo().userId));
+  //     // })
+  //   }
 
-//   // Iniciar o vídeo (botão Start Video)
-//   document.getElementById("startVideo").onclick = function () {
-//     const stream = client.getMediaStream();
-//     stream.startVideo();
-//   }
+  //   // Iniciar o vídeo (botão Start Video)
+  //   document.getElementById("startVideo").onclick = function () {
+  //     const stream = client.getMediaStream();
+  //     stream.startVideo();
+  //   }
 })
 
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
   <meta charset="UTF-8" />
@@ -17,7 +17,7 @@
     }
 
     video-player {
-      width: 25%;
+      width: 30%;
       height: auto;
       aspect-ratio: 16/9;
       display: inline-block;
@@ -35,21 +35,88 @@
     button {
       margin-top: 5px;
     }
+
+    .video {
+      width: 75%;
+    }
+
+    .chat {
+      width: 24%;
+      height: 700px;
+      background-color: blue;
+      float: right;
+      position: relative;
+    }
+
+    #chatInput {
+      display: inline-block;
+      bottom: 0;
+      position: absolute;
+      bottom: 0;
+      width: 80%;
+      height: 30px;
+    }
+
+    #btnEnviar {
+      display: inline-block;
+      bottom: 0;
+      position: absolute;
+      bottom: 0;
+      width: 18%;
+      height: 36px;
+      right: 0;
+    }
+
+    div {
+      display: inline-block;
+    }
+
+    .messages {
+      width: 100%;
+      height: 664px;
+      background-color: rgb(65, 134, 111);
+    }
+
+    .messages .sentMessage {
+      font-size: 20px;
+      margin-left: 5px;
+      margin-top: 5px;
+      display: block;
+    }
+    
+    .messages .senderName {
+      font-size: 15px;
+      margin-left: 5px;
+      margin-top: 5px;
+      display: block;
+      font-weight: bold;
+    }
   </style>
 </head>
 
 <body>
   <div id="app"></div>
-  <video-player-container>
-    <video-player id="myVideo"></video-player>
-    <!-- <video-player id="video2"></video-player> -->
-  </video-player-container>
+  <div class="video">
+    <video-player-container>
+      <video-player id="myVideo"></video-player>
+      <!-- <video-player id="video2"></video-player> -->
+    </video-player-container>
+  </div>
+  <div class="chat">
+    <div class="messages">
+    </div>
+    <div class="bottom">
+      <input type="text" name="chatInput" id="chatInput">
+      <button id="btnEnviar">enviar</button>
+    </div>
+  </div>
+  <!-- <button id="stopVideo">Stop video</button> -->
+  <!-- <button id="startVideo">Start video</button> -->
+  <button id="toggleVideo">toggle video</button>
+  <button id="leave">Leave session</button>
+
 
   <script type="module" src="/src/main.js"></script>
-
-  <button id="stopVideo">Stop video</button>
-  <button id="startVideo">Start video</button>
-  <button id="toggleVideo">toggle video</button>
 </body>
 
 </html>
