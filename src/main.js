@@ -1,7 +1,4 @@
 import ZoomVideo from '@zoom/videosdk'
-// import dotenv from 'dotenv';
-// dotenv.config();
-
 
 const client = ZoomVideo.createClient()
 
@@ -9,9 +6,11 @@ var sessionName = 'testeum';
 var jwtToken = import.meta.env.VITE_JWT_TOKEN; // precisa ser o token jwt de vídeo
 var userName = 'Teste';
 
+// TODO: talvez adicionar um pop-up pedindo pra pessoa ativar a câmera e microfone
 // TODO: Organizar melhor as variáveis e talvez iniciar a var stream em um escopo global
 // Esse código está desorganizado pra caralho por enquanto
-client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
+// client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
+client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
   // Se usuário entra
   client.on('user-added', (payload) => {
     payload.forEach((item) => {
@@ -59,8 +58,9 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
     .join(sessionName, jwtToken, userName)
     .then(() => {
       const stream = client.getMediaStream();
-      return stream.startVideo().then(() => { // Usar isso aqui caso for usar sem background
-        // return stream.startVideo({ virtualBackground: { imageUrl: '../public/background_hnsggg.png' } }).then(() => {
+      return stream.startVideo().then(() => { // Background normal
+        // return stream.startVideo({ virtualBackground: { imageUrl: '../public/background_hnsggg.png' } }).then(() => { // Background com imagem
+        // return stream.startVideo({ virtualBackground: { imageUrl: 'blur' } }).then(() => { // Background borrado
         return stream.attachVideo(client.getCurrentUserInfo().userId);
       }).then((userVideo) => {
         // document.querySelector('video-player-container').appendChild(userVideo);
@@ -157,22 +157,29 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
     console.log('Active speaker, use for CSS visuals', payload) // new active speaker, for example, use for microphone visuals, css video border, etc.
   })
 
+  // Listar microfones
   document.getElementById('listSpeaker').addEventListener('click', () => {
     // Valida se o microfone está habilitado. Se não estiver, retorna uma mensagem
-    if (muteOn == false) { 
+    if (muteOn == false) {
       const stream = client.getMediaStream();
       let microphones = stream.getMicList();
       // stream.switchMicrophone(microphones[1].deviceId)
       for (let i = 0; i < microphones.length; i++) {
         console.log(microphones[i]);
       }
-    }else {
+    } else {
       console.log("Microfone está desabilitado!");
     }
   });
 
-
-
+  // Listar câmeras
+  document.getElementById('listCameras').addEventListener('click', () => {
+    const stream = client.getMediaStream();
+    let cameras = stream.getCameraList();
+    for (let i = 0; i < cameras.length; i++) {
+      console.log(cameras[i]);
+    }
+  });
 
 
 
