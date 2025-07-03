@@ -1,11 +1,16 @@
 import ZoomVideo from '@zoom/videosdk'
+// import dotenv from 'dotenv';
+// dotenv.config();
+
 
 const client = ZoomVideo.createClient()
 
 var sessionName = 'testeum';
-var jwtToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhcHBfa2V5IjoiTGduOU04QVFPeXQyZUowc2RVT3FvOG4ybW10OW02TTBaNHJZIiwicm9sZV90eXBlIjowLCJ0cGMiOiJ0ZXN0ZXVtIiwidmVyc2lvbiI6MSwiaWF0IjoxNzUxNDc0NTc4LCJleHAiOjE3NTE0ODE3Nzh9.10vs-cl83WMatyiyTN70YmDYm_k6Z6m12ykA6cIe99Q'; // precisa ser o token jwt de vídeo
+var jwtToken = import.meta.env.VITE_JWT_TOKEN; // precisa ser o token jwt de vídeo
 var userName = 'Teste';
 
+// TODO: Organizar melhor as variáveis e talvez iniciar a var stream em um escopo global
+// Esse código está desorganizado pra caralho por enquanto
 client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
   // Se usuário entra
   client.on('user-added', (payload) => {
@@ -34,7 +39,8 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
       // a user turned on their video, render it
       stream.attachVideo(payload.userId, 3).then((userVideo) => {
         //document.querySelector('video-player-container').removeChild(document.getElementById(client.getCurrentUserInfo().userId));
-        document.querySelector('video-player-container').appendChild(userVideo)
+        userVideo.style.display = "inline-block";
+        document.querySelector('video-player-container').appendChild(userVideo);
       })
       if (document.querySelector('[node-id="0"]')) {
         console.log('ok');
@@ -58,7 +64,9 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
         return stream.attachVideo(client.getCurrentUserInfo().userId);
       }).then((userVideo) => {
         // document.querySelector('video-player-container').appendChild(userVideo);
+        userVideo.style.display = "inline-block";
         document.querySelector('video-player-container').replaceChild(userVideo, document.getElementById("myVideo"));
+        console.log(userVideo);
       });
     })
     .catch((error) => {
@@ -107,7 +115,7 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
 
   // Ligar ou desligar a câmera
   // --------------------------------------------------
-  let videoOn = true;
+  var videoOn = true;
   document.getElementById('toggleVideo').addEventListener('click', () => {
     const mediaStream = client.getMediaStream();
     if (!videoOn) {
@@ -128,10 +136,45 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
   });
   // --------------------------------------------------
 
+  // Iniciar / Mutar áudio
+  var muteOn = true;
   document.getElementById('startAudio').addEventListener('click', () => {
     const stream = client.getMediaStream();
-    stream.startAudio();
+    if (muteOn) {
+      stream.startAudio();
+      console.log('Audio iniciado');
+      muteOn = false;
+    } else {
+      stream.muteAudio();
+      console.log('Audio mutado');
+      muteOn = true;
+    }
   });
+
+  //The active-speaker event fires quickly for each active microphone. So it's useful for animating the microphone icon or putting a border around the active speaker so users in the session can visualize who is speaking.
+  // Não vou usar agora, mas será útil depois
+  client.on('active-speaker', (payload) => {
+    console.log('Active speaker, use for CSS visuals', payload) // new active speaker, for example, use for microphone visuals, css video border, etc.
+  })
+
+  document.getElementById('listSpeaker').addEventListener('click', () => {
+    // Valida se o microfone está habilitado. Se não estiver, retorna uma mensagem
+    if (muteOn == false) { 
+      const stream = client.getMediaStream();
+      let microphones = stream.getMicList();
+      // stream.switchMicrophone(microphones[1].deviceId)
+      for (let i = 0; i < microphones.length; i++) {
+        console.log(microphones[i]);
+      }
+    }else {
+      console.log("Microfone está desabilitado!");
+    }
+  });
+
+
+
+
+
 
   // Sair da reunião
   document.getElementById('leave').addEventListener('click', () => {
