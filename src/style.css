@@ -6,7 +6,7 @@ video-player-container {
 }
 
 video-player {
-  width: 30%;
+  width: 40%;
   height: auto;
   aspect-ratio: 16/9;
   display: inline-block;

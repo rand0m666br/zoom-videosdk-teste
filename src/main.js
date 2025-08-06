@@ -7,6 +7,8 @@ var jwtToken = import.meta.env.VITE_JWT_TOKEN; // precisa ser o token jwt de ví
 var userName = 'Teste';
 
 // TODO: talvez adicionar um pop-up pedindo pra pessoa ativar a câmera e microfone
+// TODO: arrumar o bug que, caso um usuário entre na sessão mas não permita usar a câmera, o quadrado de vídeo não é gerado para o outro participante
+//  Fazer talvez com que ele peça para permitir a câmera, ou gere um quadrado de vídeo mesmo assim
 // TODO: Organizar melhor as variáveis e talvez iniciar a var stream em um escopo global
 // Esse código está desorganizado pra caralho por enquanto
 // client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {

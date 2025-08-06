@@ -10,13 +10,16 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
             return device.kind === 'videoinput'
         })
 
+        // localVideoTrack = ZoomVideo.createLocalVideoTrack(videoDevices[0].deviceId)
         localVideoTrack = ZoomVideo.createLocalVideoTrack(videoDevices[0].deviceId)
 
         // turn on camera preview
-        localVideoTrack.start(document.querySelector('#local-preview-video'))
-        // localVideoTrack.start(document.querySelector('#local-preview-video'), {
-        // imageUrl: '../public/background_hnsggg.png'
-        // })
+        // localVideoTrack.start(document.querySelector('#local-preview-video'))
+        localVideoTrack.start(document.querySelector('#local-preview-video'), {
+            imageUrl: 'blur'
+        })
+        // blur/background image n tá funcionando na preview 
+        // localVideoTrack.start(document.querySelector('#local-preview-video'), { virtualBackground: { imageUrl: 'blur' } })
     })
 
     //   // turn on camera preview with blur or virtual background image url
@@ -31,7 +34,10 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
             videoOn = false;
             document.querySelector('canvas').remove();
         } else {
-            localVideoTrack.start(document.querySelector('#local-preview-video'));
+            // localVideoTrack.start(document.querySelector('#local-preview-video'));
+            localVideoTrack.start(document.querySelector('#local-preview-video'), {
+                imageUrl: 'blur'
+            })
             videoOn = true;
         }
     });
