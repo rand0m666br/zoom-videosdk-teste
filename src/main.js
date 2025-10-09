@@ -85,7 +85,16 @@ client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
     })
     .catch((error) => {
       console.error('Erro ao iniciar vídeo:', error);
-      // document.getElementById("modal").style.display = "flex";
+      if (error.message == "Permission dismissed") {
+        document.getElementById("modal").style.display = "flex";
+        document.getElementById("pMsg").innerHTML = "Por favor, recarregue a página e permita que o navegador utilize a <strong>câmera e microfone</strong>.";
+      } else if (error.message == "Requested device not found") {
+        document.getElementById("modal").style.display = "flex";
+        document.getElementById("pMsg").innerHTML = "Nenhuma câmera foi encontrada. Certifique-se de que seu dispositivo de vídeo está funcionando corretamente e recarregue a página.";
+      }else {
+        document.getElementById("modal").style.display = "flex";
+        document.getElementById("pMsg").innerHTML = "Erro inesperado : <strong>" + error + "</strong><br>Recarregue a página e tente novamente.";
+      }
     })
   // --------------------------------------------------
 
