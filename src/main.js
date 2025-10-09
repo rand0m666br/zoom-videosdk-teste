@@ -6,17 +6,27 @@ var sessionName = 'testeum';
 var jwtToken = import.meta.env.VITE_JWT_TOKEN; // precisa ser o token jwt de vídeo
 var userName = 'Teste';
 
+// console.log(caralho);
+
 // TODO: talvez adicionar um pop-up pedindo pra pessoa ativar a câmera e microfone
 // TODO: arrumar o bug que, caso um usuário entre na sessão mas não permita usar a câmera, o quadrado de vídeo não é gerado para o outro participante
 //  Fazer talvez com que ele peça para permitir a câmera, ou gere um quadrado de vídeo mesmo assim
 // TODO: Organizar melhor as variáveis e talvez iniciar a var stream em um escopo global
 // Esse código está desorganizado pra caralho por enquanto
 // client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
+// node-id do video-player é o mesmo que o userId. É possível gerar um quadrado de vídeo pra cada usuário ao entrar e só fazer aparecer o vídeo em si quando o usuário ativar a câmera
 client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
   // Se usuário entra
   client.on('user-added', (payload) => {
     payload.forEach((item) => {
+      // const stream = client.getMediaStream();
+      // const cameras = stream.getCameraList();
       console.log(`${item.userId} joined the session.`);
+
+      console.log(`Video status: ${item.isVideoConnect}`);
+
+      // console.log(item.userVideo);
+      // document.querySelector('video-player-container').appendChild(userVideo);
     });
   });
 
@@ -33,6 +43,7 @@ client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
   });
 
 
+  // Pausar/Iniciar vídeo ao entrar na sessão
   client.on('peer-video-state-change', (payload) => {
     const stream = client.getMediaStream();
     if (payload.action === 'Start') {
@@ -54,12 +65,13 @@ client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
     }
   })
 
-  // Entrar na sessão
+  // Iniciar vídeo ao entrar na sessão
   // --------------------------------------------------
   client
     .join(sessionName, jwtToken, userName)
     .then(() => {
       const stream = client.getMediaStream();
+
       return stream.startVideo().then(() => { // Background normal
         // return stream.startVideo({ virtualBackground: { imageUrl: '../public/background_hnsggg.png' } }).then(() => { // Background com imagem
         // return stream.startVideo({ virtualBackground: { imageUrl: 'blur' } }).then(() => { // Background borrado
@@ -67,14 +79,25 @@ client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
       }).then((userVideo) => {
         // document.querySelector('video-player-container').appendChild(userVideo);
         userVideo.style.display = "inline-block";
-        document.querySelector('video-player-container').replaceChild(userVideo, document.getElementById("myVideo"));
+        document.querySelector('video-player-container').replaceChild(userVideo, document.getElementById("myVideo")); // Vídeo de quem está vendo sempre estará em primeiro
         console.log(userVideo);
       });
     })
     .catch((error) => {
       console.error('Erro ao iniciar vídeo:', error);
+      // document.getElementById("modal").style.display = "flex";
     })
   // --------------------------------------------------
+
+  // Gambiarra desgracenta pra tirar qualquer quadrado de vídeo que seja node-id 0
+  setInterval(() => {
+    if (document.querySelector('[node-id="0"]')) {
+      console.log('ok');
+      document.querySelector('video-player-container').removeChild(document.querySelector('[node-id="0"]'));
+    } else {
+      console.log('nada');
+    }
+  }, 8000);
 
   // Inútil por enquanto
   // --------------------------------------------------
@@ -178,9 +201,20 @@ client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
   document.getElementById('listCameras').addEventListener('click', () => {
     const stream = client.getMediaStream();
     let cameras = stream.getCameraList();
+    if (cameras.length == 0) {
+      console.log("Sem câmera");
+    }
     for (let i = 0; i < cameras.length; i++) {
       console.log(cameras[i]);
     }
+  });
+
+  // Listar participantes
+  document.getElementById('listParticipants').addEventListener('click', () => {
+    let participants = client.getAllUser()
+    participants.forEach(element => {
+      console.log(element);
+    });
   });
 
 
