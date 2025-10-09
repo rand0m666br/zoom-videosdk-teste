@@ -8,10 +8,8 @@ var userName = 'Teste';
 
 // console.log(caralho);
 
-// TODO: talvez adicionar um pop-up pedindo pra pessoa ativar a câmera e microfone
 // TODO: arrumar o bug que, caso um usuário entre na sessão mas não permita usar a câmera, o quadrado de vídeo não é gerado para o outro participante
 //  Fazer talvez com que ele peça para permitir a câmera, ou gere um quadrado de vídeo mesmo assim
-// TODO: Organizar melhor as variáveis e talvez iniciar a var stream em um escopo global
 // Esse código está desorganizado pra caralho por enquanto
 // client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
 // node-id do video-player é o mesmo que o userId. É possível gerar um quadrado de vídeo pra cada usuário ao entrar e só fazer aparecer o vídeo em si quando o usuário ativar a câmera
@@ -87,13 +85,13 @@ client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
       console.error('Erro ao iniciar vídeo:', error);
       if (error.message == "Permission dismissed") {
         document.getElementById("modal").style.display = "flex";
-        document.getElementById("pMsg").innerHTML = "Por favor, recarregue a página e permita que o navegador utilize a <strong>câmera e microfone</strong>.";
+        document.getElementById("pMsg").innerHTML = "Acesso à câmera bloqueado.<br>Por favor, recarregue a página e permita que o navegador utilize a <strong>câmera e microfone</strong>.";
       } else if (error.message == "Requested device not found") {
         document.getElementById("modal").style.display = "flex";
         document.getElementById("pMsg").innerHTML = "Nenhuma câmera foi encontrada. Certifique-se de que seu dispositivo de vídeo está funcionando corretamente e recarregue a página.";
       }else {
         document.getElementById("modal").style.display = "flex";
-        document.getElementById("pMsg").innerHTML = "Erro inesperado : <strong>" + error + "</strong><br>Recarregue a página e tente novamente.";
+        document.getElementById("pMsg").innerHTML = "Erro inesperado : <strong>" + error.message + "</strong><br>Recarregue a página e tente novamente.";
       }
     })
   // --------------------------------------------------
