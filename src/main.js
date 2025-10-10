@@ -77,6 +77,15 @@ client.init('pt-BR', 'Global', { stayAwake: true }, { leaveOnPageUnload: true },
     })
     .catch((error) => {
       console.error('Erro ao iniciar vídeo:', error);
+      
+      let msg;
+      if (!error.message) {
+        console.log("asjdhsakjhdkjsahdkahkdksadsa");
+        msg = error.reason;
+      }else {
+        msg = error.message;
+      }
+
       if (error.message == "Permission dismissed" || error.message == "Permission denied") {
         document.getElementById("modal").style.display = "flex";
         document.getElementById("pMsg").innerHTML = "Acesso à câmera bloqueado.<br>Por favor, recarregue a página e permita que o navegador utilize a <strong>câmera e microfone</strong>.";
@@ -85,7 +94,7 @@ client.init('pt-BR', 'Global', { stayAwake: true }, { leaveOnPageUnload: true },
         document.getElementById("pMsg").innerHTML = "Nenhuma câmera foi encontrada. Certifique-se de que seu dispositivo de vídeo está funcionando corretamente e recarregue a página.";
       } else {
         document.getElementById("modal").style.display = "flex";
-        document.getElementById("pMsg").innerHTML = "Erro inesperado : <strong>" + error.message + "</strong><br>Recarregue a página e tente novamente.";
+        document.getElementById("pMsg").innerHTML = "Erro inesperado : <strong>" + msg + "</strong><br>Recarregue a página e tente novamente.";
       }
     })
   // --------------------------------------------------
