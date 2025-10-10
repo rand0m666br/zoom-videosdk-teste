@@ -6,14 +6,12 @@ var sessionName = 'testeum';
 var jwtToken = import.meta.env.VITE_JWT_TOKEN; // precisa ser o token jwt de vídeo
 var userName = 'Teste';
 
-// console.log(caralho);
 
 // TODO: arrumar o bug que, caso um usuário entre na sessão mas não permita usar a câmera, o quadrado de vídeo não é gerado para o outro participante
 //  Fazer talvez com que ele peça para permitir a câmera, ou gere um quadrado de vídeo mesmo assim
 // Esse código está desorganizado pra caralho por enquanto
 // client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
-// node-id do video-player é o mesmo que o userId. É possível gerar um quadrado de vídeo pra cada usuário ao entrar e só fazer aparecer o vídeo em si quando o usuário ativar a câmera
-client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
+client.init('pt-BR', 'Global', { stayAwake: true }, { leaveOnPageUnload: true }, { patchJsMedia: true }).then(() => {
   // Se usuário entra
   client.on('user-added', (payload) => {
     payload.forEach((item) => {
@@ -29,17 +27,13 @@ client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
   });
 
   // Se usuário é removido
-  // Funciona caso o usuário clique no botão pra sair
-  // TODO: detectar se o usuário saiu fechando a aba (no momento não detecta)
   client.on('user-removed', (payload) => {
     payload.forEach((item) => {
       console.log(`${item.userId} left the session.`);
       document.querySelector('video-player-container').removeChild(document.querySelector(`[node-id="${item.userId}"]`));
       document.querySelector('video-player-container').removeChild(document.querySelector('[node-id="0"]'));
-      // stream.detachVideo(item.userId);
     });
   });
-
 
   // Pausar/Iniciar vídeo ao entrar na sessão
   client.on('peer-video-state-change', (payload) => {
@@ -83,38 +77,55 @@ client.init('pt-BR', 'Global', { patchJsMedia: true }).then(() => {
     })
     .catch((error) => {
       console.error('Erro ao iniciar vídeo:', error);
-      if (error.message == "Permission dismissed") {
+      if (error.message == "Permission dismissed" || error.message == "Permission denied") {
         document.getElementById("modal").style.display = "flex";
         document.getElementById("pMsg").innerHTML = "Acesso à câmera bloqueado.<br>Por favor, recarregue a página e permita que o navegador utilize a <strong>câmera e microfone</strong>.";
       } else if (error.message == "Requested device not found") {
         document.getElementById("modal").style.display = "flex";
         document.getElementById("pMsg").innerHTML = "Nenhuma câmera foi encontrada. Certifique-se de que seu dispositivo de vídeo está funcionando corretamente e recarregue a página.";
-      }else {
+      } else {
         document.getElementById("modal").style.display = "flex";
         document.getElementById("pMsg").innerHTML = "Erro inesperado : <strong>" + error.message + "</strong><br>Recarregue a página e tente novamente.";
       }
     })
   // --------------------------------------------------
 
-  // Gambiarra desgracenta pra tirar qualquer quadrado de vídeo que seja node-id 0
-  setInterval(() => {
-    if (document.querySelector('[node-id="0"]')) {
-      console.log('ok');
-      document.querySelector('video-player-container').removeChild(document.querySelector('[node-id="0"]'));
-    } else {
-      console.log('nada');
+  client.on('device-permission-change', (payload) => {
+    const { name, state } = payload;
+    /**
+     * name contains 'microphone' or 'camera'
+     * state contains 'denied', 'granted' or 'prompt'
+     * */
+    if (state === 'denied') {
+      console.warn(`${name} permission is denied, please grant it`);
     }
-  }, 8000);
+    if (state === 'granted') {
+      console.warn(`${name} granted`);
+    }
+    if (state === 'prompt') {
+      console.warn(`${name} granted`);
+    }
+  });
+
+
+  // Gambiarra desgracenta pra tirar qualquer quadrado de vídeo que seja node-id 0
+  // Provavelmente não vou mais precisar disso
+  // setInterval(() => {
+  //   if (document.querySelector('[node-id="0"]')) {
+  //     console.log('ok');
+  //     document.querySelector('video-player-container').removeChild(document.querySelector('[node-id="0"]'));
+  //   }
+  // }, 8000);
 
   // Inútil por enquanto
   // --------------------------------------------------
-  // client.on("user-update", async (payload) => {
-  //   console.log('user-update');
-  // });
+  client.on("user-update", async (payload) => {
+    console.log('user-update');
+  });
 
-  // client.on('connection-change', (payload) => {
-  //   console.log(payload);
-  // });
+  client.on('connection-change', (payload) => {
+    console.log(payload);
+  });
   // --------------------------------------------------
 
   // Chat
