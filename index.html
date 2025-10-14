@@ -10,19 +10,24 @@
 </head>
 
 <body>
-    <video-player-container>
-        <video-player id="myVideo"></video-player>
-    </video-player-container>
+    <div class="containerVideo">
+        <video-player-container>
+            <video-player id="myVideo"></video-player>
+        </video-player-container>
+        <div>
+            <label for="">Nome:</label>
+            <input type="text" name="" id="">
+            <button id="enter">Enter session</button>
+        </div>
+    </div>
 
     <!-- <button id="stopVideo">Stop video</button> -->
     <!-- <button id="startVideo">Start video</button> -->
     <div class="buttons">
         <button id="toggleVideo">toggle video</button>
         <button id="startAudio">microfone</button>
-        <button id="enter">Enter session</button>
         <button id="listSpeaker">list speakers</button>
         <button id="listCameras">list cameras</button>
-        <button id="listParticipants">list participants</button>
     </div>
 
     <label for="mic-input-level">Input level:</label><progress id="mic-input-level" max="100" value="0"></progress>

@@ -41,6 +41,7 @@ button {
   margin-top: 5px;
   /* display: block; */
   height: 50px;
+  cursor: pointer;
 }
 
 .buttons {
@@ -51,4 +52,27 @@ button {
 .video {
   width: 75%;
   margin-top: 5px;
+}
+
+.containerVideo {
+  width: 100%;
+  /* background-color: red; */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.containerVideo div label, .containerVideo div button, .containerVideo div input {
+  display: block;
+}
+
+.containerVideo div {
+  margin-left: 10px;
+}
+
+progress {
+  width: 500px;
+  height: 30px;
+  background-color: green;
 }

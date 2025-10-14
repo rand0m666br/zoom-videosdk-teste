@@ -28,9 +28,19 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
         })
     });
 
+    var videoOn = false;
     document.getElementById("toggleVideo").onclick = function () {
-        // turn on camera preview
-        localVideoTrack.start(document.querySelector('#myVideo'));
+        // localVideoTrack = ZoomVideo.createLocalVideoTrack(videoDevices[0].deviceId);
+        if (!videoOn) {   
+            // turn on camera preview
+            localVideoTrack.start(document.querySelector('#myVideo'));
+            videoOn = true;
+        }else {
+            localVideoTrack.stop();
+            document.querySelector("#myVideo").removeChild(document.querySelector("canvas"));
+            videoOn = false;
+        }
+        console.log(videoOn);
     }
     // turn on camera preview with blur or virtual background image url
     //   localVideoTrack.start(document.querySelector('#local-preview-video'), {
@@ -43,11 +53,6 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
     // to change the camera, stop the track and recreate it with a new cameraId
     //   localVideoTrack.switchCamera(cameraId);
 
-
-
-    document.getElementById("startAudio").onclick = function () {
-        previewMicrophoneButton();
-    }
     // turn on microphone preview
     function previewMicrophoneButton() {
         localAudioTrack.unmute();
@@ -60,7 +65,6 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
     function stopPreviewMicrophoneButton() {
         localAudioTrack.mute()
     }
-
 
     let microphoneTester = undefined;
     document.body.addEventListener("click", (event) => {
@@ -99,27 +103,38 @@ client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
                     onStopPlayRecording: () => {
                         target.textContent = "Stop test";
                         target.dataset["start"] = "1";
+                        console.log(inputLevelElm.value);
+                        inputLevelElm.value = 0;
+                        console.log("Stop1");
                     },
                 });
                 target.dataset["start"] = "1";
                 target.textContent = "Stop test";
+                console.log("Stop2");
+                console.log(inputLevelElm.value);
+                inputLevelElm.value = 0;
             } else if (value === "2") {
                 microphoneTester.stopRecording();
             }
         }
     });
+
+    // document.getElementById("startAudio").onclick = function () {
+    //     let microphones = stream.getMicList()
+
+    //     // to change the microphone stop the track and recreate it with a new microphoneId
+    //     localAudioTrack.switchMicrophone(microphoneId); {
+    //         localAudioTrack.stop().then(() => {
+    //             localAudioTrack = ZoomVideo.createLocalAudioTrack(microphoneId)
+    //             localAudioTrack.start().then(() => {
+    //                 this.localAudioTrack.unmute()
+    //             })
+    //         })
+    //     }
+    // }
+
+
 });
-
-
-// to change the microphone stop the track and recreate it with a new microphoneId
-// switchMicrophone(microphoneId) {
-//   localAudioTrack.stop().then(() => {
-//     localAudioTrack = ZoomVideo.createLocalAudioTrack(microphoneId)
-//     localAudioTrack.start().then(() => {
-//       this.localAudioTrack.unmute()
-//     })
-//   })
-// }
 
 document.getElementById("enter").onclick = function () {
     window.location.href = "http://localhost:5173/meeting.html";
